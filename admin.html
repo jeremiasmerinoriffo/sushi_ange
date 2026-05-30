@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Panel privado - Sushi Ange</title>
+  <style>
+    :root {
+      --rojo: #d62828;
+      --rojo-oscuro: #9d0208;
+      --negro: #111111;
+      --gris: #f4f4f4;
+      --gris-2: #e9e9e9;
+      --texto: #1f1f1f;
+      --verde: #25D366;
+      --sombra: 0 10px 28px rgba(0,0,0,.12);
+      --radio: 22px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(214,40,40,.14), transparent 32%),
+        linear-gradient(180deg, #fff 0%, #f6f6f6 45%, #eeeeee 100%);
+      color: var(--texto);
+      min-height: 100vh;
+    }
+
+    header {
+      background: linear-gradient(135deg, #111, #2a2a2a);
+      color: white;
+      text-align: center;
+      padding: 28px 16px;
+      border-bottom-left-radius: 34px;
+      border-bottom-right-radius: 34px;
+      box-shadow: var(--sombra);
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 30px;
+      text-transform: uppercase;
+    }
+
+    header p {
+      margin: 8px 0 0;
+      color: #eee;
+    }
+
+    main {
+      max-width: 1050px;
+      margin: auto;
+      padding: 18px 14px 40px;
+    }
+
+    .card {
+      background: rgba(255,255,255,.96);
+      border-radius: var(--radio);
+      padding: 16px;
+      margin-bottom: 16px;
+      box-shadow: var(--sombra);
+      border: 1px solid rgba(0,0,0,.05);
+    }
+
+    .login {
+      max-width: 420px;
+      margin: 40px auto;
+    }
+
+    label {
+      display: block;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+
+    input {
+      width: 100%;
+      padding: 13px;
+      border: 1px solid #d7d7d7;
+      border-radius: 14px;
+      font-size: 15px;
+      outline: none;
+    }
+
+    input:focus {
+      border-color: var(--rojo);
+      box-shadow: 0 0 0 4px rgba(214,40,40,.10);
+    }
+
+    button {
+      border: 0;
+      border-radius: 14px;
+      padding: 13px 15px;
+      font-weight: 900;
+      cursor: pointer;
+      font-size: 15px;
+      transition: transform .12s ease;
+    }
+
+    button:active { transform: scale(.98); }
+
+    .primary {
+      background: linear-gradient(135deg, var(--rojo), var(--rojo-oscuro));
+      color: white;
+      width: 100%;
+      margin-top: 12px;
+    }
+
+    .toolbar {
+      display: grid;
+      grid-template-columns: 1fr auto auto;
+      gap: 10px;
+      align-items: end;
+    }
+
+    .btn-soft {
+      background: #eee;
+      color: #111;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+
+    .stat {
+      background: white;
+      border-radius: 18px;
+      padding: 16px;
+      box-shadow: var(--sombra);
+      border: 1px solid #eee;
+    }
+
+    .stat span {
+      display: block;
+      color: #555;
+      font-size: 14px;
+      margin-bottom: 8px;
+    }
+
+    .stat strong {
+      color: var(--rojo);
+      font-size: 28px;
+    }
+
+    .pedido {
+      background: white;
+      border-radius: 18px;
+      padding: 16px;
+      margin-bottom: 12px;
+      box-shadow: var(--sombra);
+      border: 1px solid #eee;
+    }
+
+    .pedido-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: flex-start;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 10px;
+      margin-bottom: 10px;
+    }
+
+    .pedido h3 {
+      margin: 0;
+      color: var(--rojo);
+      font-size: 19px;
+    }
+
+    .pedido-total {
+      font-weight: 900;
+      font-size: 20px;
+      color: var(--rojo);
+      white-space: nowrap;
+    }
+
+    .producto {
+      padding: 10px;
+      background: #f8f8f8;
+      border-radius: 14px;
+      margin-top: 8px;
+    }
+
+    .producto strong {
+      color: #111;
+    }
+
+    .detalle-roll {
+      margin: 5px 0;
+      line-height: 1.35;
+    }
+
+    .muted {
+      color: #666;
+      font-size: 14px;
+    }
+
+    .empty {
+      background: white;
+      border-radius: 18px;
+      padding: 18px;
+      box-shadow: var(--sombra);
+    }
+
+    .error {
+      color: var(--rojo);
+      font-weight: 700;
+      margin-top: 10px;
+    }
+
+    .hidden { display: none; }
+
+    @media (max-width: 760px) {
+      .toolbar { grid-template-columns: 1fr; }
+      .stats { grid-template-columns: 1fr; }
+      .pedido-head { flex-direction: column; }
+      header h1 { font-size: 25px; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Panel privado</h1>
+    <p>Ventas y pedidos de Sushi Ange</p>
+  </header>
+
+  <main>
+    <section id="loginBox" class="card login">
+      <h2>Ingresar</h2>
+      <label>Clave</label>
+      <input id="clave" type="password" placeholder="Ingresa tu clave" />
+      <button class="primary" onclick="entrar()">Entrar</button>
+      <div id="loginError" class="error"></div>
+    </section>
+
+    <section id="panel" class="hidden">
+      <div class="card">
+        <h2>Ver pedidos del día</h2>
+        <div class="toolbar">
+          <div>
+            <label>Fecha</label>
+            <input id="fecha" type="date" />
+          </div>
+          <button class="btn-soft" onclick="cargarPedidos()">Actualizar</button>
+          <button class="btn-soft" onclick="salir()">Salir</button>
+        </div>
+      </div>
+
+      <div class="stats">
+        <div class="stat">
+          <span>Total vendido</span>
+          <strong id="totalVendido">$0</strong>
+        </div>
+        <div class="stat">
+          <span>Cantidad de pedidos</span>
+          <strong id="cantidadPedidos">0</strong>
+        </div>
+        <div class="stat">
+          <span>Promo más vendida</span>
+          <strong id="promoMasVendida">-</strong>
+        </div>
+      </div>
+
+      <div id="pedidosLista" style="margin-top:16px;"></div>
+    </section>
+  </main>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
+    import {
+      getFirestore,
+      collection,
+      getDocs,
+      query,
+      orderBy
+    } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDUMySSnAS5mpEFtncooBFn-268Z8LuD5Y",
+      authDomain: "menu-sushi-ange.firebaseapp.com",
+      projectId: "menu-sushi-ange",
+      storageBucket: "menu-sushi-ange.firebasestorage.app",
+      messagingSenderId: "1073224165075",
+      appId: "1:1073224165075:web:913b3d109905faf6b61626"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const CLAVE_ADMIN = "1234";
+
+    function formatCLP(valor) {
+      return "$" + Number(valor || 0).toLocaleString("es-CL");
+    }
+
+    function obtenerFechaLocalPedido(pedido) {
+      // Preferimos fechaISO porque viene desde index.html.
+      // La convertimos a fecha local de Chile para que calce con el selector del panel.
+      let fecha;
+
+      if (pedido.fechaISO) {
+        fecha = new Date(pedido.fechaISO);
+      } else if (pedido.creadoEn && typeof pedido.creadoEn.toDate === "function") {
+        fecha = pedido.creadoEn.toDate();
+      } else if (pedido.fecha) {
+        fecha = new Date(pedido.fecha);
+      } else {
+        return "";
+      }
+
+      return fecha.toLocaleDateString("en-CA", { timeZone: "America/Santiago" });
+    }
+
+    function obtenerHoraLocalPedido(pedido) {
+      let fecha;
+
+      if (pedido.fechaISO) {
+        fecha = new Date(pedido.fechaISO);
+      } else if (pedido.creadoEn && typeof pedido.creadoEn.toDate === "function") {
+        fecha = pedido.creadoEn.toDate();
+      } else if (pedido.fecha) {
+        fecha = new Date(pedido.fecha);
+      } else {
+        return "";
+      }
+
+      return fecha.toLocaleTimeString("es-CL", {
+        timeZone: "America/Santiago",
+        hour: "2-digit",
+        minute: "2-digit"
+      });
+    }
+
+    function contarPromoMasVendida(pedidos) {
+      const conteo = {};
+
+      pedidos.forEach(pedido => {
+        const productos = pedido.productos || [];
+        productos.forEach(prod => {
+          const nombre = prod.nombre || "Sin nombre";
+          conteo[nombre] = (conteo[nombre] || 0) + 1;
+        });
+      });
+
+      const entradas = Object.entries(conteo).sort((a, b) => b[1] - a[1]);
+      return entradas.length ? `${entradas[0][0]} (${entradas[0][1]})` : "-";
+    }
+
+    function renderPedido(pedido) {
+      const productos = pedido.productos || [];
+      const hora = obtenerHoraLocalPedido(pedido);
+
+      return `
+        <div class="pedido">
+          <div class="pedido-head">
+            <div>
+              <h3>${pedido.cliente || "Cliente no indicado"}</h3>
+              <div class="muted">Hora: ${hora || "No registrada"} · Estado: ${pedido.estado || "nuevo"}</div>
+            </div>
+            <div class="pedido-total">${formatCLP(pedido.total)}</div>
+          </div>
+
+          ${productos.map(prod => `
+            <div class="producto">
+              <strong>${prod.nombre || "Producto"}</strong>
+              <div class="muted">${prod.piezas || ""}</div>
+
+              ${(prod.detalleRolls || []).map(roll => `
+                <div class="detalle-roll">🍣 ${roll.nombre}: ${(roll.ingredientes || []).join(", ")}</div>
+              `).join("")}
+
+              ${prod.extraSalmon ? `<div class="muted">Adicional salmón: ${formatCLP(prod.extraSalmon)}</div>` : ""}
+              ${prod.extraCuarto ? `<div class="muted">Ingrediente 4 extra: ${formatCLP(prod.extraCuarto)}</div>` : ""}
+              ${prod.observaciones ? `<div class="muted">Obs: ${prod.observaciones}</div>` : ""}
+              ${prod.obs ? `<div class="muted">Obs: ${prod.obs}</div>` : ""}
+            </div>
+          `).join("")}
+        </div>
+      `;
+    }
+
+    window.entrar = function entrar() {
+      const clave = document.getElementById("clave").value;
+      const error = document.getElementById("loginError");
+
+      if (clave !== CLAVE_ADMIN) {
+        error.textContent = "Clave incorrecta.";
+        return;
+      }
+
+      sessionStorage.setItem("adminOK", "true");
+      document.getElementById("loginBox").classList.add("hidden");
+      document.getElementById("panel").classList.remove("hidden");
+      cargarPedidos();
+    };
+
+    window.salir = function salir() {
+      sessionStorage.removeItem("adminOK");
+      location.reload();
+    };
+
+    window.cargarPedidos = async function cargarPedidos() {
+      const fechaSeleccionada = document.getElementById("fecha").value;
+      const lista = document.getElementById("pedidosLista");
+
+      lista.innerHTML = `<div class="empty">Cargando pedidos...</div>`;
+
+      try {
+        const q = query(collection(db, "pedidos"), orderBy("fechaISO", "desc"));
+        const snap = await getDocs(q);
+
+        const pedidos = [];
+        snap.forEach(doc => {
+          const data = doc.data();
+          if (obtenerFechaLocalPedido(data) === fechaSeleccionada) {
+            pedidos.push({ id: doc.id, ...data });
+          }
+        });
+
+        const total = pedidos.reduce((acc, p) => acc + Number(p.total || 0), 0);
+
+        document.getElementById("totalVendido").textContent = formatCLP(total);
+        document.getElementById("cantidadPedidos").textContent = pedidos.length;
+        document.getElementById("promoMasVendida").textContent = contarPromoMasVendida(pedidos);
+
+        if (!pedidos.length) {
+          lista.innerHTML = `<div class="empty">No hay pedidos para esta fecha.</div>`;
+          return;
+        }
+
+        lista.innerHTML = pedidos.map(renderPedido).join("");
+
+      } catch (error) {
+        console.error(error);
+        lista.innerHTML = `<div class="empty">No se pudieron cargar los pedidos. Revisa las reglas de Firestore.</div>`;
+      }
+    };
+
+    function fechaHoyChile() {
+      return new Date().toLocaleDateString("en-CA", { timeZone: "America/Santiago" });
+    }
+
+    document.getElementById("fecha").value = fechaHoyChile();
+
+    if (sessionStorage.getItem("adminOK") === "true") {
+      document.getElementById("loginBox").classList.add("hidden");
+      document.getElementById("panel").classList.remove("hidden");
+      cargarPedidos();
+    }
+  </script>
+</body>
+</html>
